@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
+<displayName>Jamf Connect License Expiration Date</displayName>
+<description>This EA assumes that you are deploying your license via </description>
+<dataType>date</dataType>
+<scriptContentsMac>#!/bin/zsh&#13;
+&#13;
+if [[ -f "/Library/Managed Preferences/com.jamf.connect.plist" ]];then&#13;
+    decodedLicense=$(echo $(defaults read /Library/Managed\ Preferences/com.jamf.connect.plist LicenseFile) | base64 -D)&#13;
+    expiryDateRaw=$(/usr/bin/plutil -extract ExpirationDate raw - &lt;&lt;&lt; $decodedLicense)&#13;
+    expiryDate=$(echo "$expiryDateRaw" | rev | cut -c6- | rev )&#13;
+else&#13;
+    expiryDate="9999-99-99 23:59:59"&#13;
+fi&#13;
+&#13;
+echo "&lt;result&gt;$expiryDate&lt;/result&gt;"</scriptContentsMac>
+</extensionAttribute>
